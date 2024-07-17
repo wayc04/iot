@@ -12,8 +12,8 @@
 // ===========================
 // 输入你的WiFi凭证
 // ===========================
-const char *ssid = "iQOO";
-const char *password = "aaa12345678";
+const char *ssid = "羊羊羊";
+const char *password = "David20041106";
 
 // 函数声明
 void initializeCameraServer();
