@@ -940,3 +940,342 @@ theme = {
 
 ---
 
+饼图主要是通过扇形的弧度表现不同类目的数据在总和中的占比，它的数据格式比柱状图更简单，只有一维的数值，不需要给类目。因为不在直角坐标系上，所以也不需要 xAxis，yAxis。
+
+
+
+### example
+
+```javascript
+myChart.setOption({
+    series : [
+        {
+            name: '访问来源',
+            type: 'pie',    // 设置图表类型为饼图
+            radius: '55%',  // 饼图的半径，外半径为可视区尺寸（容器高宽中较小一项）的 55% 长度。
+            data:[          // 数据数组，name 为数据项名称，value 为数据项值
+                {value:235, name:'视频广告'},
+                {value:274, name:'联盟广告'},
+                {value:310, name:'邮件营销'},
+                {value:335, name:'直接访问'},
+                {value:400, name:'搜索引擎'}
+            ]
+        }
+    ]
+})
+```
+
+
+
+## 样式设计
+
+### 颜色主题
+
+---
+
+ECharts4 开始，除了默认主题外，内置了两套主题，分别为 **light** 和 **dark**
+
+```javascript
+var chart = echarts.init(dom, 'light');
+ 
+//或者
+ 
+var chart = echarts.init(dom, 'dark');
+```
+
+主题编辑器选择喜欢的主题下载
+
+如果你使用 JS 版本，可以将 JS 主题代码保存一个 **主题名.js** 文件，然后在 HTML 中引用该文件，最后在代码中使用该主题。
+
+```javascript
+<!-- 引入主题 -->
+<script src="https://www.runoob.com/static/js/wonderland.js"></script>
+...
+
+// HTML 引入 wonderland.js 文件后，在初始化的时候调用
+var myChart = echarts.init(dom, 'wonderland');
+// ...
+```
+
+如果主题保存为 JSON 文件，那么可以自行加载和注册。
+
+比如上图中我们选中了一个主题，将 JSON 代码保存为 **wonderland.json**。
+
+```javascript
+//主题名称是 wonderland
+$.getJSON('wonderland.json', function (themeJSON) {
+    echarts.registerTheme('wonderland', themeJSON)
+    var myChart = echarts.init(dom, 'wonderland');
+});
+```
+
+
+
+### 调色盘
+
+---
+
+调色盘可以在 option 中设置。
+
+调色盘给定了一组颜色，图形、系列会自动从其中选择颜色。
+
+可以设置全局的调色盘，也可以设置系列自己专属的调色盘。
+
+```javascript
+option = {
+    // 全局调色盘。
+    color: ['#c23531','#2f4554', '#61a0a8', '#d48265', '#91c7ae','#749f83',  '#ca8622', '#bda29a','#6e7074', '#546570', '#c4ccd3'],
+
+    series: [{
+        type: 'bar',
+        // 此系列自己的调色盘。
+        color: ['#dd6b66','#759aa0','#e69d87','#8dc1a9','#ea7e53','#eedd78','#73a373','#73b9bc','#7289ab', '#91ca8c','#f49f42'],
+        ...
+    }, {
+        type: 'pie',
+        // 此系列自己的调色盘。
+        color: ['#37A2DA', '#32C5E9', '#67E0E3', '#9FE6B8', '#FFDB5C','#ff9f7f', '#fb7293', '#E062AE', '#E690D1', '#e7bcf3', '#9d96f5', '#8378EA', '#96BFFF'],
+        ...
+    }]
+}
+```
+
+
+
+### 直接样式设置
+
+直接的样式设置是比较常用设置方式。纵观 ECharts 的 [option](https://www.echartsjs.com/zh/option.html#title) 中，很多地方可以设置 [itemStyle](https://www.echartsjs.com/zh/option.html#series.itemStyle)、[lineStyle](https://www.echartsjs.com/zh/option.html#series-line.lineStyle)、[areaStyle](https://www.echartsjs.com/zh/option.html#series-line.areaStyle)、[label](https://www.echartsjs.com/zh/option.html#series.label) 等等。这些的地方可以直接设置图形元素的颜色、线宽、点的大小、标签的文字、标签的样式等等。
+
+一般来说，ECharts 的各个系列和组件，都遵从这些命名习惯，虽然不同图表和组件中，`itemStyle`、`label` 等可能出现在不同的地方。
+
+
+
+### 高亮样式设置
+
+在鼠标悬浮到图形元素上时，一般会出现高亮的样式。默认情况下，高亮的样式是根据普通样式自动生成的。
+
+如果要自定义高亮样式可以通过 emphasis 属性来定制：
+
+```javascript
+// 高亮样式。
+emphasis: {
+    itemStyle: {
+        // 高亮时点的颜色
+        color: 'red'
+    },
+    label: {
+        show: true,
+        // 高亮时标签的文字
+        formatter: '高亮时显示的标签内容'
+    }
+},
+```
+
+
+
+## 异步加载数据
+
+---
+
+ECharts 通常数据设置在 setOption 中，如果我们需要异步加载数据，可以配合 jQuery等工具，在异步获取数据后通过 setOption 填入数据和配置项就行。
+
+ECharts 通常数据设置在 setOption 中，如果我们需要异步加载数据，可以配合 jQuery等工具，在异步获取数据后通过 setOption 填入数据和配置项就行。 json 数据：
+
+```javascript
+{
+    "data_pie" : [
+    {"value":235, "name":"视频广告"},
+    {"value":274, "name":"联盟广告"},
+    {"value":310, "name":"邮件营销"},
+    {"value":335, "name":"直接访问"},
+    {"value":400, "name":"搜索引擎"}
+    ]
+}
+```
+
+### example
+
+```javascript
+var myChart = echarts.init(document.getElementById('main'));
+$.get('https://www.runoob.com/static/js/echarts_test_data.json', function (data) {
+    myChart.setOption({
+        series : [
+            {
+                name: '访问来源',
+                type: 'pie',    // 设置图表类型为饼图
+                radius: '55%',  // 饼图的半径，外半径为可视区尺寸（容器高宽中较小一项）的 55% 长度。
+                data:data.data_pie
+            }
+        ]
+    })
+}, 'json')
+```
+
+如果异步加载需要一段时间，我们可以添加 loading 效果，ECharts 默认有提供了一个简单的加载动画。只需要调用 showLoading 方法显示。数据加载完成后再调用 hideLoading 方法隐藏加载动画：
+
+```javascript
+var myChart = echarts.init(document.getElementById('main'));
+myChart.showLoading();  // 开启 loading 效果
+$.get('https://www.runoob.com/static/js/echarts_test_data.json', function (data) {
+    myChart.hideLoading();  // 隐藏 loading 效果
+    myChart.setOption({
+        series : [
+            {
+                name: '访问来源',
+                type: 'pie',    // 设置图表类型为饼图
+                radius: '55%',  // 饼图的半径，外半径为可视区尺寸（容器高宽中较小一项）的 55% 长度。
+                data:data.data_pie
+            }
+        ]
+    })
+}, 'json')
+```
+
+### 数据的动态更新
+
+ECharts 由数据驱动，数据的改变驱动图表展现的改变，因此动态数据的实现也变得异常简单。
+
+所有数据的更新都通过 setOption 实现，你只需要定时获取数据，setOption 填入数据，而不用考虑数据到底产生了那些变化，ECharts 会找到两组数据之间的差异然后通过合适的动画去表现数据的变化。
+
+```javascript
+var base = +new Date(2014, 9, 3);
+var oneDay = 24 * 3600 * 1000;
+var date = [];
+
+var data = [Math.random() * 150];
+var now = new Date(base);
+
+function addData(shift) {
+    now = [now.getFullYear(), now.getMonth() + 1, now.getDate()].join('/');
+    date.push(now);
+    data.push((Math.random() - 0.4) * 10 + data[data.length - 1]);
+
+    if (shift) {
+        date.shift();
+        data.shift();
+    }
+
+    now = new Date(+new Date(now) + oneDay);
+}
+
+for (var i = 1; i < 100; i++) {
+    addData();
+}
+
+option = {
+    xAxis: {
+        type: 'category',
+        boundaryGap: false,
+        data: date
+    },
+    yAxis: {
+        boundaryGap: [0, '50%'],
+        type: 'value'
+    },
+    series: [
+        {
+            name:'成交',
+            type:'line',
+            smooth:true,
+            symbol: 'none',
+            stack: 'a',
+            areaStyle: {
+                normal: {}
+            },
+            data: data
+        }
+    ]
+};
+
+setInterval(function () {
+    addData(true);
+    myChart.setOption({
+        xAxis: {
+            data: date
+        },
+        series: [{
+            name:'成交',
+            data: data
+        }]
+    });
+}, 500);
+
+// 基于准备好的dom，初始化echarts实例
+var myChart = echarts.init(document.getElementById('main'));
+myChart.setOption(option)
+```
+
+
+
+## 数据集
+
+ECharts 使用 dataset 管理数据。
+
+dataset 组件用于单独的数据集声明，从而数据可以单独管理，被多个组件复用，并且可以基于数据指定数据到视觉的映射。
+
+### example
+
+```javascript
+option = {
+    legend: {},
+    tooltip: {},
+    dataset: {
+        // 提供一份数据。
+        source: [
+            ['product', '2015', '2016', '2017'],
+            ['Matcha Latte', 43.3, 85.8, 93.7],
+            ['Milk Tea', 83.1, 73.4, 55.1],
+            ['Cheese Cocoa', 86.4, 65.2, 82.5],
+            ['Walnut Brownie', 72.4, 53.9, 39.1]
+        ]
+    },
+    // 声明一个 X 轴，类目轴（category）。默认情况下，类目轴对应到 dataset 第一列。
+    xAxis: {type: 'category'},
+    // 声明一个 Y 轴，数值轴。
+    yAxis: {},
+    // 声明多个 bar 系列，默认情况下，每个系列会自动对应到 dataset 的每一列。
+    series: [
+        {type: 'bar'},
+        {type: 'bar'},
+        {type: 'bar'}
+    ]
+}
+```
+
+or
+
+```javascript
+option = {
+    legend: {},
+    tooltip: {},
+    dataset: {
+        // 这里指定了维度名的顺序，从而可以利用默认的维度到坐标轴的映射。
+        // 如果不指定 dimensions，也可以通过指定 series.encode 完成映射，参见后文。
+        dimensions: ['product', '2015', '2016', '2017'],
+        source: [
+            {product: 'Matcha Latte', '2015': 43.3, '2016': 85.8, '2017': 93.7},
+            {product: 'Milk Tea', '2015': 83.1, '2016': 73.4, '2017': 55.1},
+            {product: 'Cheese Cocoa', '2015': 86.4, '2016': 65.2, '2017': 82.5},
+            {product: 'Walnut Brownie', '2015': 72.4, '2016': 53.9, '2017': 39.1}
+        ]
+    },
+    xAxis: {type: 'category'},
+    yAxis: {},
+    series: [
+        {type: 'bar'},
+        {type: 'bar'},
+        {type: 'bar'}
+    ]
+};
+```
+
+
+
+### 数据到图形映射
+
+我们可以在配置项中将数据映射到图形中。
+
+我们可以使用 series.seriesLayoutBy 属性来配置 dataset 是列（column）还是行（row）映射为图形系列（series），默认是按照列（column）来映射。
+
+以下实例我们将通过 seriesLayoutBy 属性来配置数据是使用列显示还是按行显示。
+
